@@ -8,6 +8,19 @@
 	]);
 
 	let newTask = $state('')
+    let filter = $state('all')
+
+    let filteredTasks = $derived(
+        tasks.filter(tasks => {
+            if(filter === 'active') {
+                return !tasks.completed
+            } else if(filter === 'completed') {
+                return tasks.completed
+            } else {
+                return tasks
+            }
+        })
+    )
 
 	function addNewTask() {
 		if (newTask.trim() === '') {
@@ -22,6 +35,7 @@
 	function deleteTask(taskId: string) {
 		tasks = tasks.filter(tasks => tasks.id !== taskId)
 	}
+
 </script>
 
 <h1>{appTitle}</h1>
@@ -36,8 +50,12 @@
 {/if}
 <p>Total tasks: {tasks.length}</p>
 
+<button onclick={() => filter = 'active'}>Active</button>
+<button onclick={() => filter = 'completed'}>Completed</button>
+<button onclick={() => filter = 'all'}>All</button>
 
-{#each tasks as task (task.id)}
+
+{#each filteredTasks as task (task.id)}
     <li>
         <label>
             <input bind:checked={task.completed} type="checkbox" />
